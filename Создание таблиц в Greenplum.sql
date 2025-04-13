@@ -1,12 +1,12 @@
--- Создадим рабочую схему discounts (discounts)
+-- Создадим рабочую схему std11_12
 
-CREATE schema discounts;
+CREATE schema std11_12;
 
 -- Создадим таблицы из внешних источников
 -- загрузим по протоколу gpfdist из локальных файлов CSV
 
 
- -- Магазины(СПРАВОЧНИК)
+-- Магазины(СПРАВОЧНИК)
 CREATE TABLE std11_12.stores (
 	plant text NULL,
 	txt text NULL
@@ -87,17 +87,17 @@ WITH (
 DISTRIBUTED BY (billnum)      -- Распределение данных по billnum.
 PARTITION BY RANGE(calday)    -- Партиционирование по столбцу calday.
 (
-    PARTITION ym START ('2020-01-01') END ('2027-01-01') EVERY (INTERVAL '1 month'),
+    PARTITION ym START ('2020-01-01') END ('2023-03-01') EVERY (INTERVAL '1 month'),
     DEFAULT PARTITION other   -- Данные, не попадающие в другие партиции.
 );
 
 --Таблица bills_item (ФАКТЫ)
 
 CREATE TABLE std11_12.bills_item (
-    billnum int NOT NULL,
-    billitem int NULL,
-    material int NULL,
-    qty int NULL,
+    billnum int8 NOT NULL,
+    billitem int8 NULL,
+    material int8 NULL,
+    qty int8 NULL,
     netval numeric(17, 2) NULL,
     tax numeric(17, 2) NULL,
     rpa_sat numeric(17, 2) NULL,
@@ -112,7 +112,7 @@ WITH (
 DISTRIBUTED BY (billnum)      -- Распределение данных по billnum.
 PARTITION BY RANGE(calday)    -- Партиционирование по столбцу calday.
 (
-    PARTITION ym START ('2020-01-01') END ('2027-01-01') EVERY (INTERVAL '1 month'),
+    PARTITION ym START ('2020-01-01') END ('2021-03-01') EVERY (INTERVAL '1 month'),
     DEFAULT PARTITION other   -- Данные, не попадающие в другие партиции.
 );
 
@@ -124,11 +124,10 @@ CREATE TABLE std11_12.traffic (
     "time" time NULL,               -- Изменяем тип данных на time
     frame_id text NOT NULL,  
     quantity int NULL,
-    calday date NULL                -- Добавляем столбец для партиционирования
 )
 DISTRIBUTED BY (frame_id)           -- Распределение данных по уникальному ключу
-PARTITION BY RANGE(calday)          -- Партиционирование по столбцу calday
+PARTITION BY RANGE(date)          -- Партиционирование по столбцу date
 (
-    PARTITION ym START ('2020-01-01') END ('2027-01-01') EVERY (INTERVAL '1 month'),
+    PARTITION ym START ('2020-01-01') END ('2021-03-01') EVERY (INTERVAL '1 month'),
     DEFAULT PARTITION other         -- Данные, не попадающие в другие партиции
 );
